@@ -1,168 +1,97 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import {
-  Zap,
-  Sparkles,
-  ShieldCheck,
-  Smile,
-  ArrowRight,
-  MousePointer2,
-} from "lucide-react";
+import { motion } from "framer-motion";
 
 const services = [
   {
-    title: "Root Canal",
-    id: "01",
-    icon: Zap,
-    color: "#6366f1",
-    details: "Micro-Surgical Precision",
-    desc: "Using advanced 3D imaging for pain-free endodontics.",
+    title: "Root Canal Treatment",
+    desc: "Advanced painless root canal using 3D digital imaging and rotary endodontics for precise and safe procedures.",
+    image:
+      "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=1200&auto=format&fit=crop",
   },
   {
-    title: "Whitening",
-    id: "02",
-    icon: Sparkles,
-    color: "#a855f7",
-    details: "Laser Brightening",
-    desc: "Achieve a 5-shade brighter smile in 45 minutes.",
+    title: "Teeth Whitening",
+    desc: "Professional laser whitening treatment that brightens your smile up to 5 shades in a single visit.",
+    image:
+      "https://images.unsplash.com/photo-1606813902914-2f5a8f2f8cfa?q=80&w=1200&auto=format&fit=crop",
   },
   {
-    title: "Implants",
-    id: "03",
-    icon: ShieldCheck,
-    color: "#0f172a",
-    details: "Swiss Bio-Tech",
-    desc: "Titanium roots that integrate with your bone naturally.",
+    title: "Dental Implants",
+    desc: "Permanent titanium implants that naturally integrate with your jawbone for long-lasting strength.",
+    image:
+      "https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=1200&auto=format&fit=crop",
   },
   {
-    title: "Aligners",
-    id: "04",
-    icon: Smile,
-    color: "#10b981",
-    details: "Clear Straightening",
-    desc: "AI-designed invisible aligners for perfect results.",
+    title: "Invisible Aligners",
+    desc: "Clear aligner system designed with AI precision to give you perfectly straight teeth without braces.",
+    image:
+      "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?q=80&w=1200&auto=format&fit=crop",
   },
 ];
 
-export default function PulseServices() {
-  const targetRef = useRef(null);
-
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-  });
-
-  const x = useTransform(scrollYProgress, [0, 1], ["2%", "-70%"]);
-
+export default function Services() {
   return (
-    <section
-      ref={targetRef}
-      className="relative h-[300vh] w-full overflow-hidden"
-    >
-      {/* Background Image */}
-      <div className="absolute inset-0 -z-10">
-        <img
-          src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=2070&auto=format&fit=crop"
-          alt="Dental Clinic"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-white/90 backdrop-blur-sm" />
-      </div>
-
-      <div className="sticky top-0 flex h-screen items-center overflow-hidden">
-        {/* Decorative Big Text */}
-        <div className="absolute left-10 top-24 select-none opacity-[0.04]">
-          <h2 className="text-[18vw] font-black leading-none text-slate-900">
-            CARE
+    <section className="py-24 bg-gradient-to-b from-white to-slate-50">
+      <div className="max-w-7xl mx-auto px-6">
+        
+        {/* Section Header */}
+        <div className="text-center mb-20">
+          <p className="text-indigo-600 font-semibold tracking-widest uppercase text-sm">
+            Our Expertise
+          </p>
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mt-4">
+            Comprehensive Dental Services
           </h2>
+          <p className="text-slate-600 mt-6 max-w-2xl mx-auto">
+            We provide modern dental treatments using advanced technology 
+            and patient-focused care for long-term oral health.
+          </p>
         </div>
 
-        {/* Left Heading Content */}
-        <div className="absolute z-20 ml-10 lg:ml-24 max-w-xl">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-indigo-600 font-bold tracking-[0.4em] text-xs uppercase mb-6"
-          >
-            Advanced Dentistry
-          </motion.p>
-
-          <h2 className="text-5xl lg:text-7xl font-bold text-slate-900 tracking-tight leading-tight">
-            Designed for <br /> Perfect Smiles.
-          </h2>
-
-          <div className="mt-12 flex items-center gap-3 text-slate-400">
-            <MousePointer2 size={16} className="animate-bounce" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">
-              Scroll to explore
-            </span>
-          </div>
-        </div>
-
-        {/* Horizontal Slider */}
-        <motion.div style={{ x }} className="flex gap-10 pl-[45vw]">
+        {/* Services List */}
+        <div className="space-y-28">
           {services.map((service, index) => (
-            <motion.div
+            <div
               key={index}
-              whileHover={{ y: -15 }}
-              transition={{ duration: 0.4 }}
-              className="relative h-[500px] w-[380px] lg:h-[580px] lg:w-[460px] shrink-0 rounded-[3rem] bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl group overflow-hidden"
+              className={`grid md:grid-cols-2 gap-14 items-center ${
+                index % 2 !== 0 ? "md:flex-row-reverse" : ""
+              }`}
             >
-              {/* Gradient Glow */}
-              <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-700"
-                style={{
-                  background: `radial-gradient(circle at top right, ${service.color}30, transparent 60%)`,
-                }}
-              />
+              {/* Image */}
+              <motion.div
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7 }}
+                viewport={{ once: true }}
+                className="relative"
+              >
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="rounded-3xl shadow-2xl w-full h-[400px] object-cover"
+                />
+              </motion.div>
 
-              <div className="relative p-12 h-full flex flex-col justify-between">
-                <div>
-                  <span className="text-7xl font-black text-slate-200 group-hover:text-indigo-100 transition">
-                    {service.id}
-                  </span>
+              {/* Content */}
+              <motion.div
+                initial={{ opacity: 0, x: index % 2 === 0 ? 50 : -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7 }}
+                viewport={{ once: true }}
+              >
+                <h3 className="text-3xl md:text-4xl font-bold text-slate-900">
+                  {service.title}
+                </h3>
 
-                  <div className="mt-8 w-16 h-16 rounded-2xl bg-white shadow-lg flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
-                    <service.icon size={28} strokeWidth={1.5} />
-                  </div>
-                </div>
+                <p className="mt-6 text-slate-600 leading-relaxed text-lg">
+                  {service.desc}
+                </p>
 
-                <div>
-                  <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-3">
-                    {service.details}
-                  </p>
-
-                  <h3 className="text-4xl font-bold text-slate-900 mb-6 tracking-tight group-hover:translate-x-2 transition-transform duration-500">
-                    {service.title}
-                  </h3>
-
-                  <p className="text-slate-600 leading-relaxed max-w-[280px]">
-                    {service.desc}
-                  </p>
-                </div>
-
-                <div className="mt-10 flex items-center gap-4">
-                  <div className="h-px flex-1 bg-slate-200 group-hover:bg-indigo-300 transition-colors" />
-                  <div className="w-12 h-12 rounded-full border border-slate-300 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-all">
-                    <ArrowRight size={20} />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+                <button className="mt-8 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-full font-medium transition-all">
+                  Book Consultation
+                </button>
+              </motion.div>
+            </div>
           ))}
-
-          {/* Final CTA Card */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="h-[500px] w-[380px] lg:h-[580px] lg:w-[460px] shrink-0 rounded-[3rem] bg-gradient-to-br from-indigo-600 to-purple-600 p-12 flex flex-col justify-center items-center text-center text-white shadow-2xl"
-          >
-            <h4 className="text-4xl font-bold mb-6">Ready for Your Smile?</h4>
-
-            <button className="bg-white text-indigo-600 px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:scale-105 transition-transform">
-              Book Consultation
-            </button>
-          </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
