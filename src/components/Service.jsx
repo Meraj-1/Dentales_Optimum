@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
-import { FiArrowRight, FiCheckCircle, FiActivity } from "react-icons/fi";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { FiArrowRight, FiCheckCircle, FiActivity, FiArrowUpRight, FiShield } from "react-icons/fi";
+import { useRef } from "react";
 
 const services = [
   {
@@ -7,139 +8,148 @@ const services = [
     desc: "Advanced painless root canal using 3D digital imaging and rotary endodontics.",
     image: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=1600&auto=format&fit=crop",
     tag: "Pain-Free",
-    stats: "99% Success"
+    stats: "99% Success",
+    color: "indigo"
   },
   {
     title: "Teeth Whitening",
     desc: "Professional laser whitening treatment that brightens your smile up to 5 shades.",
     image: "https://images.unsplash.com/photo-1606813902914-2f5a8f2f8cfa?q=80&w=1600&auto=format&fit=crop",
     tag: "Instant Results",
-    stats: "45 Min Session"
+    stats: "45 Min Session",
+    color: "blue"
   },
   {
     title: "Dental Implants",
     desc: "Permanent titanium implants that naturally integrate with your jawbone.",
     image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=1600&auto=format&fit=crop",
     tag: "Lifetime Strength",
-    stats: "Swiss Quality"
+    stats: "Swiss Quality",
+    color: "slate"
   },
   {
     title: "Invisible Aligners",
     desc: "Clear aligner system designed with AI precision to give you perfectly straight teeth.",
     image: "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?q=80&w=1600&auto=format&fit=crop",
     tag: "AI Precision",
-    stats: "Top Aesthetic"
+    stats: "Top Aesthetic",
+    color: "emerald"
   },
 ];
 
-export default function Services() {
-  return (
-    <section className="relative py-32 bg-gradient-to-b from-white via-slate-50 to-white overflow-hidden">
+export default function EnhancedServices() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
 
-      {/* Soft radial background */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.08),transparent_40%)]" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_80%_70%,rgba(139,92,246,0.08),transparent_40%)]" />
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  return (
+    <section ref={containerRef} className="relative py-24 md:py-32 bg-white overflow-hidden">
+      
+      {/* Scroll Progress Bar (Top) */}
+      <motion.div style={{ scaleX }} className="fixed top-0 left-0 right-0 h-1 bg-indigo-600 origin-left z-50" />
+
+      {/* Background Elements */}
+      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-br from-indigo-50 to-transparent blur-3xl opacity-60 -z-10" />
+      <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-blue-50 rounded-full blur-[120px] opacity-40 -z-10" />
 
       <div className="max-w-7xl mx-auto px-6">
-
-        {/* Header */}
-        <div className="text-center mb-28">
-          <div className="flex justify-center items-center gap-2 text-indigo-600 font-semibold tracking-widest uppercase text-xs mb-6">
-            <FiActivity className="animate-pulse" />
-            Elite Dental Solutions
-          </div>
-
-          <h2 className="text-6xl md:text-7xl font-extrabold tracking-tight text-slate-900 leading-[1.05]">
-            Precision. Care. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500">
-              Confidence.
-            </span>
+        
+        {/* Header - Minimal & Modern */}
+        <div className="relative mb-24 flex flex-col items-center text-center">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            className="px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-600 font-bold text-[10px] tracking-[0.3em] uppercase mb-6 flex items-center gap-2"
+          >
+            <FiShield size={14} /> Certified Excellence
+          </motion.div>
+          
+          <h2 className="text-5xl md:text-8xl font-black text-slate-900 tracking-tighter leading-none">
+            The New <span className="text-indigo-600 italic">Standard</span> <br /> 
+            in Oral Care.
           </h2>
-
-          <p className="text-slate-500 mt-8 max-w-2xl mx-auto text-lg leading-relaxed">
-            Combining AI diagnostics and modern dental science to create
-            comfortable, safe and long-lasting results.
+          
+          <p className="mt-8 text-slate-500 font-medium max-w-xl text-lg leading-relaxed">
+            Combining biological precision with luxury aesthetics to create smiles that last a lifetime.
           </p>
         </div>
 
-        {/* Grid */}
-        <div className="grid md:grid-cols-2 gap-12">
+        {/* The Grid - Asymmetric Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
           {services.map((service, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              transition={{ duration: 0.8, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="group relative rounded-[3rem] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-700"
+              // Bento Logic: Alternate column spans
+              className={`relative group overflow-hidden rounded-[3rem] bg-slate-50 border border-slate-100 shadow-sm
+                ${index === 0 || index === 3 ? "md:col-span-7" : "md:col-span-5"} 
+                h-[450px] md:h-[600px]`}
             >
-              {/* Image */}
-              <div className="relative h-[500px] overflow-hidden">
+              {/* Media Layer */}
+              <div className="absolute inset-0 z-0">
                 <img
                   src={service.image}
                   alt={service.title}
-                  className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110"
                 />
-
-                {/* Dark glass overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
               </div>
 
-              {/* Floating Glass Info Strip */}
-              <div className="absolute top-8 left-8 flex gap-4">
-                <div className="bg-white/10 backdrop-blur-xl border border-white/20 px-5 py-2 rounded-full">
-                  <span className="text-xs font-bold text-white tracking-widest uppercase">
-                    {service.tag}
-                  </span>
+              {/* Labels Layer */}
+              <div className="absolute top-8 left-8 right-8 flex justify-between items-start z-10">
+                <div className="px-5 py-2 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white text-[10px] font-black uppercase tracking-widest">
+                  {service.tag}
                 </div>
-
-                <div className="bg-indigo-600/90 px-4 py-2 rounded-xl flex items-center gap-2 shadow-lg">
-                  <FiCheckCircle className="text-white text-sm" />
-                  <span className="text-xs font-semibold text-white uppercase tracking-wide">
-                    {service.stats}
-                  </span>
-                </div>
+                <motion.div 
+                   whileHover={{ rotate: 45 }}
+                   className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-slate-900 cursor-pointer shadow-xl transition-colors hover:bg-indigo-600 hover:text-white"
+                >
+                  <FiArrowUpRight size={20} />
+                </motion.div>
               </div>
 
-              {/* Content */}
-              <div className="absolute bottom-12 left-12 right-12">
-                <h3 className="text-4xl font-bold text-white tracking-tight">
-                  {service.title}
-                </h3>
-
-                <p className="text-white/80 mt-4 leading-relaxed text-base max-w-md">
-                  {service.desc}
-                </p>
-
-                <button className="mt-8 inline-flex items-center gap-2 bg-white text-slate-900 hover:bg-indigo-600 hover:text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 group/btn">
-                  Book Appointment
-                  <FiArrowRight className="group-hover/btn:translate-x-1 transition-transform" />
-                </button>
+              {/* Text Layer */}
+              <div className="absolute bottom-10 left-10 right-10 z-10">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <div className="flex items-center gap-3 text-indigo-400 mb-4">
+                     <FiCheckCircle />
+                     <span className="text-xs font-bold uppercase tracking-tighter">{service.stats}</span>
+                  </div>
+                  <h3 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight leading-none">
+                    {service.title}
+                  </h3>
+                  <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-sm mb-8 transition-all group-hover:text-white">
+                    {service.desc}
+                  </p>
+                  
+                  <div className="h-px w-full bg-white/20 mb-8" />
+                  
+                  <button className="flex items-center gap-4 text-white font-bold text-sm group/btn">
+                    EXPLORE PROCEDURE
+                    <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center group-hover/btn:bg-white group-hover/btn:text-slate-900 transition-all duration-300">
+                       <FiArrowRight />
+                    </div>
+                  </button>
+                </motion.div>
               </div>
-
-              {/* Soft number background */}
-              <span className="absolute bottom-6 right-10 text-white/10 text-[140px] font-black pointer-events-none">
-                0{index + 1}
-              </span>
             </motion.div>
           ))}
         </div>
-
-        {/* Minimal CTA */}
-        <div className="mt-32 text-center">
-          <h3 className="text-5xl font-bold text-slate-900">
-            Experience Dentistry <span className="text-indigo-600">Reimagined.</span>
-          </h3>
-
-          <p className="text-slate-500 mt-6 max-w-xl mx-auto text-lg">
-            Trusted by thousands of happy patients for advanced, comfortable and modern treatments.
-          </p>
-
-          <button className="mt-10 bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-5 rounded-full text-lg font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
-            Schedule Consultation
-          </button>
-        </div>
-
       </div>
     </section>
   );
