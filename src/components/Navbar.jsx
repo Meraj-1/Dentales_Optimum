@@ -1,93 +1,111 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Phone } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const navLinks = [
+  { name: "About", href: "#about" },
+  { name: "Services", href: "#services" },
+  { name: "Contact", href: "#contact" },
+  { name: "Testimonials", href: "#testimonials" },
+];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <nav
-      className={`fixed w-full z-50 transition-all duration-300 ${
+      className={`fixed w-full z-[100] transition-all duration-500 ${
         scrolled
-          ? "bg-white/90 backdrop-blur-md shadow-lg py-3"
-          : "bg-white py-5"
+          ? "bg-white/80 backdrop-blur-lg border-b border-gray-100 py-3 shadow-sm"
+          : "bg-transparent py-6"
       }`}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 lg:px-12">
         
         {/* Logo */}
-        <h1 className="text-2xl font-bold text-blue-600 tracking-wide">
-          SmileCare Dental
-        </h1>
+        <a href="/" className="group flex items-center space-x-2">
+          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl group-hover:rotate-6 transition-transform">
+            S
+          </div>
+          <span className="text-2xl font-extrabold text-slate-800 tracking-tight">
+            Smile<span className="text-blue-600">Care</span>
+          </span>
+        </a>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-8 font-medium">
-          <a
-            href="#about"
-            className="relative group transition"
-          >
-            About
-            <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-blue-600 transition-all group-hover:w-full"></span>
-          </a>
-
-          <a
-            href="#services"
-            className="relative group transition"
-          >
-            Services
-            <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-blue-600 transition-all group-hover:w-full"></span>
-          </a>
-
-          <a
-            href="#contact"
-            className="relative group transition"
-          >
-            Contact
-            <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-blue-600 transition-all group-hover:w-full"></span>
-          </a>
+        <div className="hidden md:flex items-center space-x-10">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="text-slate-600 hover:text-blue-600 font-semibold transition-colors relative group"
+            >
+              {link.name}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full" />
+            </a>
+          ))}
         </div>
 
-        {/* Call Button */}
+        {/* Action Button */}
         <div className="hidden md:block">
           <a
             href="tel:+919999999999"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full shadow-md transition-all duration-300"
+            className="flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-blue-100 transition-all active:scale-95"
           >
-            Call Now
+            <Phone size={18} />
+            <span>Call Now</span>
           </a>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Toggle */}
         <button
-          className="md:hidden text-gray-700"
+          aria-label="Toggle Menu"
+          className="md:hidden p-2 text-slate-800 hover:bg-gray-100 rounded-lg transition-colors"
           onClick={() => setIsOpen(!isOpen)}
         >
-          {isOpen ? <X size={26} /> : <Menu size={26} />}
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden bg-white shadow-md px-6 py-6 space-y-4 font-medium">
-          <a href="#about" onClick={() => setIsOpen(false)}>About</a>
-          <a href="#services" onClick={() => setIsOpen(false)}>Services</a>
-          <a href="#contact" onClick={() => setIsOpen(false)}>Contact</a>
-          <a
-            href="tel:+919999999999"
-            className="block bg-blue-600 text-white text-center py-2 rounded-lg"
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white border-b border-gray-100 overflow-hidden"
           >
-            Call Now
-          </a>
-        </div>
-      )}
+            <div className="flex flex-col p-6 space-y-4">
+              {navLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="text-lg font-medium text-slate-700 hover:text-blue-600 transition-colors"
+                >
+                  {link.name}
+                </a>
+              ))}
+              <hr className="border-gray-100" />
+              <a
+                href="tel:+919999999999"
+                className="flex justify-center items-center gap-2 bg-blue-600 text-white py-4 rounded-2xl font-bold"
+              >
+                <Phone size={20} />
+                Call +91 99999 99999
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
