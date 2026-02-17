@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Phone, Calendar as CalIcon, Clock, ChevronRight, CheckCircle2, Clipboard, X, Sparkles, Stethoscope } from "lucide-react";
+import { 
+  User, Phone, Calendar as CalIcon, Clock, ChevronRight, 
+  CheckCircle2, X, Sparkles, Stethoscope, ShieldCheck, 
+  ArrowLeft, ArrowRight, CreditCard // <--- Added ArrowRight here
+} from "lucide-react";
 
 export default function BookingForm({ onClose }) {
   const [step, setStep] = useState("form");
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    service: "General Checkup",
+    service: "Consultation",
     date: "",
-    time: "Morning (10am - 1pm)"
+    time: "10:00 AM"
   });
 
   const handleChange = (e) => {
@@ -19,167 +24,159 @@ export default function BookingForm({ onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate loading
-    setTimeout(() => setStep("success"), 800);
+    setIsLoading(true);
+    // Mimic API delay for professional feel
+    setTimeout(() => {
+      setIsLoading(false);
+      setStep("success");
+    }, 1500);
   };
 
   if (step === "success") {
     return (
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }} 
-        animate={{ opacity: 1, scale: 1 }} 
-        className="p-10 md:p-16 text-center flex flex-col items-center bg-white"
+        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} 
+        className="p-12 md:p-20 text-center flex flex-col items-center bg-white"
       >
-        <div className="relative mb-6">
+        <div className="w-24 h-24 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-8 relative">
           <motion.div 
-            initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: "spring" }}
-            className="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center"
+            initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }}
           >
             <CheckCircle2 size={48} strokeWidth={1.5} />
           </motion.div>
-          <motion.div 
-            animate={{ rotate: 360 }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-0 border-2 border-dashed border-emerald-200 rounded-full"
-          />
+          <div className="absolute inset-0 border border-indigo-100 rounded-full animate-ping" />
         </div>
         
-        <h3 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">All Set, {formData.name.split(' ')[0]}!</h3>
-        <p className="text-slate-500 text-sm mb-8 leading-relaxed max-w-[280px]">
-          We've reserved a slot for <b>{formData.service}</b> on <b>{formData.date}</b>. Our coordinator will call you shortly.
+        <h3 className="text-3xl font-bold text-slate-900 mb-4 tracking-tight">Booking Confirmed</h3>
+        <p className="text-slate-500 text-sm mb-10 leading-relaxed max-w-[320px]">
+          Hello <b>{formData.name}</b>, your request for <b>{formData.service}</b> has been received. We will contact you at <b>{formData.phone}</b>.
         </p>
         
         <button 
           onClick={onClose} 
-          className="group flex items-center gap-3 bg-slate-900 text-white px-10 py-4 rounded-2xl font-bold text-xs tracking-widest hover:bg-indigo-600 transition-all shadow-lg"
+          className="w-full max-w-xs bg-slate-900 text-white py-4 rounded-xl font-bold text-xs tracking-widest hover:bg-indigo-600 transition-all shadow-xl"
         >
-          GREAT, THANKS <X size={14} className="opacity-50 group-hover:rotate-90 transition-transform" />
+          RETURN TO HOME
         </button>
       </motion.div>
     );
   }
 
   return (
-    <div className="relative bg-white max-h-[90vh] overflow-y-auto no-scrollbar">
-      {/* Close Button */}
-      <button 
-        onClick={onClose} 
-        className="absolute top-6 right-6 z-30 w-10 h-10 flex items-center justify-center rounded-full bg-black/10 text-white hover:bg-black/20 transition-all backdrop-blur-md"
-      >
-        <X size={20} />
-      </button>
-
-      {/* Hero Header */}
-      <div className="bg-indigo-600 p-10 text-white relative overflow-hidden">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 0.1, scale: 1 }}
-          className="absolute -right-6 -bottom-6 rotate-12"
-        >
-          <Stethoscope size={180} />
-        </motion.div>
-        
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="bg-white/20 px-3 py-1 rounded-full text-[10px] font-black tracking-[0.2em] uppercase backdrop-blur-sm">Priority Access</span>
-          </div>
-          <h3 className="text-3xl font-bold mb-1 tracking-tighter">Reserve Your Visit</h3>
-          <p className="text-indigo-100/70 text-xs font-medium uppercase tracking-widest flex items-center gap-2">
-            <Sparkles size={12} /> Expert care for your smile
-          </p>
+    <div className="relative bg-white max-h-[95vh] overflow-y-auto overflow-x-hidden custom-scrollbar">
+      {/* --- PREMIUM HEADER --- */}
+      <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-8 py-6 flex justify-between items-center">
+        <div>
+          <h3 className="text-xl font-bold text-slate-900 tracking-tight">Schedule Visit</h3>
+          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.15em]">Premium Dental Experience</p>
         </div>
+        <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400">
+          <X size={20} />
+        </button>
       </div>
 
-      {/* Form Content */}
-      <form onSubmit={handleSubmit} className="p-8 space-y-6">
-        {/* Full Name Section */}
-        <div className="space-y-2 group">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Patient Full Name</label>
-          <div className="relative">
-            <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors" size={20} />
-            <input 
-              required name="name" value={formData.name} onChange={handleChange}
-              type="text" placeholder="Rahul Sharma" 
-              className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:border-indigo-600 focus:bg-white transition-all outline-none text-sm font-bold text-slate-800 placeholder:text-slate-300 shadow-sm" 
-            />
+      {/* --- FORM BODY --- */}
+      <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-8">
+        
+        {/* Section 1: Patient Information */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-1 h-4 bg-indigo-600 rounded-full" />
+            <span className="text-[11px] font-black uppercase tracking-widest text-slate-900">Personal Details</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1 group">
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+                <input 
+                  required name="name" onChange={handleChange}
+                  placeholder="Full Name" 
+                  className="w-full pl-11 pr-4 py-4 bg-white border border-slate-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 transition-all outline-none text-sm font-medium" 
+                />
+              </div>
+            </div>
+            <div className="space-y-1 group">
+              <div className="relative">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+                <input 
+                  required name="phone" onChange={handleChange}
+                  type="tel" placeholder="Phone Number" 
+                  className="w-full pl-11 pr-4 py-4 bg-white border border-slate-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 transition-all outline-none text-sm font-medium" 
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Contact & Service Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="space-y-2 group">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">WhatsApp No.</label>
-            <div className="relative">
-              <Phone className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors" size={20} />
+        {/* Section 2: Treatment Selection */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-1 h-4 bg-indigo-600 rounded-full" />
+            <span className="text-[11px] font-black uppercase tracking-widest text-slate-900">Medical Service</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {["Consultation", "Cleaning", "Whitening", "Implant"].map((service) => (
+              <label key={service} className="cursor-pointer group">
+                <input 
+                  type="radio" name="service" value={service} 
+                  className="peer hidden" checked={formData.service === service}
+                  onChange={handleChange}
+                />
+                <div className="py-3 px-2 text-center border border-slate-100 rounded-xl text-[11px] font-bold text-slate-500 peer-checked:border-indigo-600 peer-checked:bg-indigo-50 peer-checked:text-indigo-700 transition-all group-hover:bg-slate-50">
+                  {service}
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Section 3: Appointment Timing */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-1 h-4 bg-indigo-600 rounded-full" />
+            <span className="text-[11px] font-black uppercase tracking-widest text-slate-900">Preferred Schedule</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="relative group">
+              <CalIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
               <input 
-                required name="phone" value={formData.phone} onChange={handleChange}
-                type="tel" placeholder="+91 00000 00000" 
-                className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:border-indigo-600 focus:bg-white transition-all outline-none text-sm font-bold text-slate-800 shadow-sm" 
+                required type="date" name="date" onChange={handleChange}
+                className="w-full pl-11 pr-4 py-4 bg-white border border-slate-200 rounded-xl focus:border-indigo-600 outline-none text-sm font-medium" 
               />
             </div>
+            <div className="relative group">
+              <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={16} />
+              <select 
+                name="time" onChange={handleChange}
+                className="w-full pl-11 pr-4 py-4 bg-white border border-slate-200 rounded-xl focus:border-indigo-600 outline-none text-sm font-medium appearance-none"
+              >
+                <option>10:00 AM</option>
+                <option>01:00 PM</option>
+                <option>05:00 PM</option>
+              </select>
+            </div>
           </div>
+        </div>
+
+        {/* --- ACTION FOOTER --- */}
+        <div className="pt-6 border-t border-slate-100">
+          <button 
+            type="submit" disabled={isLoading}
+            className="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold text-[13px] tracking-widest shadow-xl shadow-slate-200 hover:bg-indigo-600 disabled:bg-slate-400 transition-all flex items-center justify-center gap-3"
+          >
+            {isLoading ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>CONFIRM APPOINTMENT <ArrowRight size={18} /></>
+            )}
+          </button>
           
-          <div className="space-y-2 group">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Treatment Type</label>
-            <div className="relative">
-              <select 
-                name="service" value={formData.service} onChange={handleChange}
-                className="w-full px-6 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:border-indigo-600 focus:bg-white transition-all outline-none text-sm font-bold text-slate-800 appearance-none cursor-pointer shadow-sm"
-              >
-                <option>General Checkup</option>
-                <option>Cosmetic Surgery</option>
-                <option>Dental Implant</option>
-                <option>Teeth Whitening</option>
-              </select>
-              <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 rotate-90 pointer-events-none" size={18} />
-            </div>
+          <div className="mt-6 flex items-center justify-center gap-6 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+            <span className="flex items-center gap-1.5"><ShieldCheck size={14} className="text-emerald-500" /> HIPAA Secure</span>
+            <span className="flex items-center gap-1.5"><Sparkles size={14} className="text-amber-400" /> Zero Waiting Time</span>
           </div>
         </div>
-
-        {/* Schedule Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="space-y-2 group">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Preferred Date</label>
-            <div className="relative">
-              <CalIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within:text-indigo-500 transition-colors" size={20} />
-              <input 
-                required name="date" value={formData.date} onChange={handleChange}
-                type="date" 
-                className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:border-indigo-600 focus:bg-white transition-all outline-none text-sm font-bold text-slate-800 shadow-sm" 
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2 group">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Best Time</label>
-            <div className="relative">
-              <Clock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none group-focus-within:text-indigo-500 transition-colors" size={20} />
-              <select 
-                name="time" value={formData.time} onChange={handleChange}
-                className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:border-indigo-600 focus:bg-white transition-all outline-none text-sm font-bold text-slate-800 appearance-none cursor-pointer shadow-sm"
-              >
-                <option>Morning (10am - 1pm)</option>
-                <option>Afternoon (2pm - 5pm)</option>
-                <option>Evening (6pm - 9pm)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <button 
-          type="submit" 
-          className="w-full bg-slate-900 text-white py-6 rounded-[1.8rem] font-black text-xs tracking-[0.3em] shadow-2xl shadow-indigo-200 hover:bg-indigo-600 hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-3 group mt-4 overflow-hidden relative"
-        >
-          <span className="relative z-10">CONFIRM APPOINTMENT</span>
-          <ChevronRight size={18} className="relative z-10 group-hover:translate-x-2 transition-transform" />
-          <motion.div 
-            initial={{ x: "-100%" }} whileHover={{ x: "100%" }} transition={{ duration: 0.6 }}
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-          />
-        </button>
-
-        <p className="text-[9px] text-center text-slate-400 font-bold tracking-widest uppercase">
-          🔒 Secure & Private HIPAA Compliant Booking
-        </p>
       </form>
     </div>
   );
