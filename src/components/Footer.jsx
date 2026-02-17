@@ -1,10 +1,10 @@
-import { motion } from "lucide-react"; // Note: Use Framer Motion for animations
-import { motion as m } from "framer-motion";
 import { 
   Facebook, Instagram, Linkedin, Twitter, 
   Phone, Mail, MapPin, Heart, ArrowRight, 
   ShieldCheck, Globe, Zap 
 } from "lucide-react";
+
+import { motion as m } from "framer-motion";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
