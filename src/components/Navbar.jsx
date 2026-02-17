@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Phone, Shield, Sparkles, Clock, Calendar, MessageSquare, ArrowRight, MapPin } from "lucide-react";
+import { Menu, X, Phone, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-
-const serviceLinks = [
-  { name: "General Dentistry", href: "#general", icon: Shield, desc: "Routine checkups" },
-  { name: "Cosmetic Surgery", href: "#cosmetic", icon: Sparkles, desc: "Smile makeovers" },
-  { name: "Emergency Care", href: "#emergency", icon: Clock, desc: "24/7 Support" },
-];
+import BookingForm from "./BookingForm";
 
 const navLinks = [
   { name: "About Clinic", href: "#about" },
@@ -16,140 +11,105 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
     window.addEventListener("scroll", handleScroll);
+    document.body.style.overflow = (isOpen || isModalOpen) ? "hidden" : "unset";
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isOpen]);
+  }, [isOpen, isModalOpen]);
 
   return (
     <>
-      {/* Subtle Progress Bar */}
-      <motion.div className="fixed top-0 left-0 right-0 h-0.5 bg-indigo-600 z-[1000] origin-left" style={{ scaleX }} />
+      {/* Progress Bar */}
+      <motion.div className="fixed top-0 left-0 right-0 h-[3px] bg-indigo-600 z-[200] origin-left" style={{ scaleX }} />
 
       <nav className={`fixed top-0 w-full z-[150] transition-all duration-500 ${
-        scrolled ? "bg-white/95 backdrop-blur-md py-3 shadow-sm border-b border-slate-100" : "bg-transparent py-6"
+        scrolled ? "bg-white/80 backdrop-blur-xl py-3 shadow-lg border-b border-slate-200/50" : "bg-transparent py-6"
       }`}>
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6">
-          
           {/* Logo */}
-          <a href="/" className={`relative z-[1001] flex items-center gap-2.5`}>
-            <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold transition-all duration-300 ${isOpen ? "bg-white text-indigo-900" : "bg-indigo-600 text-white shadow-md"}`}>
-              S
-            </div>
-            <span className={`text-lg font-semibold tracking-tight transition-colors duration-300 ${isOpen ? "text-white" : "text-slate-900"}`}>
-              Smile<span className="text-indigo-600">Care</span>
-            </span>
+          <a href="/" className="relative z-[1001] flex items-center gap-2 group">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black shadow-lg">S</div>
+            <span className={`text-xl font-bold tracking-tight transition-colors ${isOpen ? "text-white" : "text-slate-900"}`}>SmileCare</span>
           </a>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-10">
             {navLinks.map((link) => (
-              <a key={link.name} href={link.href} className="text-[13px] uppercase tracking-widest font-bold text-slate-500 hover:text-indigo-600 transition-colors">{link.name}</a>
+              <a key={link.name} href={link.href} className="text-[11px] uppercase tracking-widest font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+                {link.name}
+              </a>
             ))}
-            <button className="bg-slate-900 text-white px-7 py-2.5 rounded-full text-xs font-bold hover:bg-indigo-700 transition-all shadow-sm active:scale-95">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="bg-slate-900 text-white px-8 py-3 rounded-full text-[11px] font-black tracking-widest hover:bg-indigo-600 hover:shadow-xl hover:shadow-indigo-200 transition-all active:scale-95"
+            >
               BOOK APPOINTMENT
             </button>
           </div>
 
           {/* Mobile Toggle */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className={`lg:hidden relative z-[1001] p-2 transition-all duration-300 ${
-              isOpen ? "text-white" : "text-slate-900"
-            }`}
-          >
-            {isOpen ? <X size={26} strokeWidth={1.5} /> : <Menu size={26} strokeWidth={1.5} />}
+          <button onClick={() => setIsOpen(!isOpen)} className={`lg:hidden relative z-[1001] p-2 rounded-full ${isOpen ? "bg-white/10 text-white" : "bg-slate-100 text-slate-900"}`}>
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </nav>
 
-      {/* --- ELITE MOBILE OVERLAY --- */}
+      {/* --- ELITE BOOKING MODAL --- */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="absolute inset-0 bg-slate-950/60 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl overflow-hidden z-[2001]"
+            >
+              <BookingForm onClose={() => setIsModalOpen(false)} />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* --- MOBILE OVERLAY --- */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          <motion.div 
+            initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="fixed inset-0 bg-slate-900 z-[999] lg:hidden flex flex-col pt-32 pb-10 px-8"
           >
-            {/* Minimalist Background Detail */}
-            <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/10 via-transparent to-transparent pointer-events-none" />
+            <div className="space-y-8">
+              {navLinks.map((link, i) => (
+                <motion.a 
+                  initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
+                  key={link.name} href={link.href} onClick={() => setIsOpen(false)}
+                  className="block text-4xl font-bold text-white tracking-tighter hover:text-indigo-400 transition-colors"
+                >
+                  {link.name}
+                </motion.a>
+              ))}
+            </div>
 
-            <div className="flex flex-col h-full relative z-10">
-              
-              {/* Services List */}
-              <div className="mb-10">
-                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mb-6">Medical Specialties</p>
-                <div className="space-y-5">
-                  {serviceLinks.map((s, i) => (
-                    <motion.a
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      key={s.name}
-                      href={s.href}
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-5">
-                        <div className="w-12 h-12 rounded-full border border-slate-700 flex items-center justify-center text-slate-400 group-active:border-indigo-500 group-active:text-indigo-500 transition-colors">
-                          <s.icon size={20} strokeWidth={1.2} />
-                        </div>
-                        <div>
-                          <p className="text-white text-base font-medium">{s.name}</p>
-                          <p className="text-slate-500 text-xs mt-0.5">{s.desc}</p>
-                        </div>
-                      </div>
-                      <ArrowRight size={16} className="text-slate-700 group-active:text-indigo-500" />
-                    </motion.a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Quick Links Grid */}
-              <div className="grid grid-cols-2 gap-4 mb-10">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="py-4 px-4 rounded-xl bg-slate-800/40 text-slate-300 text-xs font-semibold border border-slate-800 transition-all active:bg-slate-800 active:text-white"
-                  >
-                    {link.name}
-                  </a>
-                ))}
-              </div>
-
-              {/* Bottom Actions - Ergonomic & Clean */}
-              <div className="mt-auto space-y-4">
-                <button className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-sm tracking-wide shadow-lg active:scale-[0.98] transition-all">
-                  BOOK CONSULTATION
-                </button>
-                
-                <div className="grid grid-cols-2 gap-3">
-                  <a href="tel:+919999" className="flex items-center justify-center gap-2.5 bg-white text-slate-900 py-4 rounded-xl font-bold text-xs active:bg-slate-100 transition-all">
-                    <Phone size={14} /> DIRECT CALL
-                  </a>
-                  <a href="https://wa.me/123" className="flex items-center justify-center gap-2.5 bg-emerald-600/10 text-emerald-500 border border-emerald-500/20 py-4 rounded-xl font-bold text-xs active:bg-emerald-600/20 transition-all">
-                    <MessageSquare size={14} /> WHATSAPP
-                  </a>
-                </div>
-
-                <div className="pt-4 flex items-center justify-center gap-2 text-slate-500 text-[9px] font-bold tracking-[0.2em] uppercase">
-                  <MapPin size={10} /> MUMBAI • MON - SAT 09:00 - 20:00
-                </div>
+            <div className="mt-auto space-y-4">
+              <button 
+                onClick={() => { setIsOpen(false); setIsModalOpen(true); }}
+                className="w-full bg-indigo-600 text-white py-6 rounded-2xl font-black text-sm tracking-widest shadow-2xl active:scale-95 transition-all"
+              >
+                BOOK CONSULTATION
+              </button>
+              <div className="grid grid-cols-2 gap-3 font-bold text-[11px] tracking-wider uppercase text-white">
+                <a href="tel:+91" className="flex items-center justify-center gap-2 bg-white/10 py-4 rounded-2xl border border-white/10"><Phone size={14} /> Call Now</a>
+                <a href="#" className="flex items-center justify-center gap-2 bg-emerald-500 py-4 rounded-2xl"><MessageSquare size={14} /> WhatsApp</a>
               </div>
             </div>
           </motion.div>
